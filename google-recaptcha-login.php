@@ -28,6 +28,7 @@ class GRecaptchaLogin {
         add_filter('authenticate', [$this, 'verify_captcha'], 30, 3);
         add_action('admin_menu', [$this, 'add_settings_page']);
         add_action('admin_init', [$this, 'register_settings']);
+        add_action('admin_enqueue_scripts', [$this, 'admin_style']);
     }
 
     public function render_captcha() {
@@ -170,25 +171,49 @@ class GRecaptchaLogin {
 
    public function render_settings_page() {
 
-    if (!current_user_can('manage_options')) {
-        return;
-    }
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+            
+            echo '<div class="grecaptcha-app">';
+            
 
-   echo <<< AB
-             <h1>Google reCAPTCHA Login Settings</h1>
-            <p>Don't you have site key and secret key? <a href="https://www.google.com/recaptcha/admin/create">Create Here</a></p>   
-   AB;
 
-    echo '<form method="post" action="options.php">';
+            echo '<div class="grecaptcha-container">';
 
-    settings_fields($this->option_name);
-    do_settings_sections($this->option_name);
+            echo '<div class="grecaptcha-header">';
+            echo '<h1>Google reCAPTCHA Settings</h1>';
+            echo '<p>' . "Don't you have site key and secret key? " .'<a href="https://www.google.com/recaptcha/admin/create">' . 'Create Here</a></p>';   
 
-    submit_button('Save Settings');
+            echo '<p>Configure your API keys and security settings</p>';
+            echo '</div>';
 
-    echo '</form>';
-    echo '</div>';
-}
+            echo '<div class="grecaptcha-card">';
+            echo '<form method="post" action="options.php">';
+
+            settings_fields($this->option_name);
+            do_settings_sections($this->option_name);
+
+            submit_button('Save Settings');
+
+            echo '</form>';
+            echo '</div>'; // card
+
+            echo '</div>'; // container
+            echo '</div>'; // app
+        }
+
+
+        function admin_style($hook){
+            if($hook !==  'settings_page_grecaptcha-login'){
+                return;
+            }
+
+             wp_enqueue_style(
+        'grecaptcha-admin-style',
+        plugin_dir_url(__FILE__) . 'assets/css/style.css'
+    );
+        }
 }
 
 new GRecaptchaLogin();
