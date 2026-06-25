@@ -1,4 +1,4 @@
-# Google reCAPTCHA Login
+# Google reCAPTCHA Login WP
 
 ## This plugin add reCAPTCHA in WP admin login page 
 
